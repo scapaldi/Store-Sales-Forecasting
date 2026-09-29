@@ -75,7 +75,7 @@ export function parseCsv(text: string): SalesRow[] {
 }
 
 export async function loadSales(): Promise<SalesRow[]> {
-  const response = await fetch(assetPath("data.csv"));
+  const response = await fetch(assetPath("stores_sales_forecasting"));
   if (!response.ok) {
     throw new Error("Could not load the sales file.");
   }
