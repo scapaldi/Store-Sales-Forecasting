@@ -1,0 +1,10 @@
+Furniture performance, 2014-2017
+
+Open Furniture-Performance.pbip in a current Power BI Desktop.
+This is a Power BI Project: the report is PBIR JSON and the semantic model is TMDL.
+The 2,121 furniture lines are embedded in the model, so you do not need the original CSV on disk.
+
+If Desktop asks you to enable Power BI projects or the TMDL format, accept that and reopen this file.
+The first open builds the imported table from the embedded file. Use the slicers on the left.
+
+The page shows average quantity per order, average ship time, sales, profit margin, margin by item and by state, orders in 2017, sales by region and sub-category, and sales and orders by year.
