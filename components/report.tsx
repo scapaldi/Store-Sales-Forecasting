@@ -73,7 +73,7 @@ function Dashboard({ rows }: { rows: SalesRow[] }) {
           No rows in data.csv.
         </p>
       ) : (
-        <div className="grid gap-3 lg:grid-cols-2">
+        <div className="grid gap-3 border-2 border-[#605e5c] lg:grid-cols-2">
           <Panel title="Regional Sales">
             <SalesBars data={summary.regions} />
           </Panel>
