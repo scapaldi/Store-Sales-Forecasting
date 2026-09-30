@@ -37,7 +37,7 @@ export function Report() {
         <header className="mb-5">
           <h1 className="mt-1 text-2xl font-semibold tracking-tight md:text-3xl">Store Sales</h1>
           <p className="mt-1 max-w-2xl text-sm text-[#605e5c]">
-            Totals from <span className="font-medium">data.csv</span>. Store Sales Forecasting · 2014–2017
+            <span className="font-medium">Store Sales Forecasting · 2014–2017</span>
           </p>
         </header>
 
