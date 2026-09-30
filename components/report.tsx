@@ -74,16 +74,16 @@ function Dashboard({ rows }: { rows: SalesRow[] }) {
         </p>
       ) : (
         <div className="grid gap-3 lg:grid-cols-2">
-          <Panel title="Sales by region">
+          <Panel title="Regional Sales">
             <SalesBars data={summary.regions} />
           </Panel>
-          <Panel title="Total sales by year">
+          <Panel title="Sales by Year">
             <YearBars data={summary.years} />
           </Panel>
-          <Panel title="Sales by sub-category">
+          <Panel title="Best Selling">
             <SalesBars data={summary.subCategories} labelWidth={108} />
           </Panel>
-          <Panel title="Sales by state">
+          <Panel title="Sales by State">
             <StateMap salesByState={summary.salesByState} />
           </Panel>
         </div>
