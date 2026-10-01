@@ -58,6 +58,57 @@ export function summarize(rows: SalesRow[]): Summary {
   };
 }
 
+export type DiscountPoint = {
+  category: string;
+  product: string;
+  discount: number;
+  profit: number;
+  sales: number;
+};
+
+export function discountPoints(rows: SalesRow[]): DiscountPoint[] {
+  return rows
+    .filter((row) => row.category || row.discount || row.profit)
+    .map((row) => ({
+      category: row.category || "Unspecified",
+      product: row.product,
+      discount: row.discount,
+      profit: row.profit,
+      sales: row.sales,
+    }));
+}
+
+const SHIP_ORDER = ["Same Day", "First Class", "Second Class", "Standard Class"];
+
+export function salesByShipMode(rows: SalesRow[]): { name: string; sales: number; count: number }[] {
+  const sales = new Map<string, number>();
+  const count = new Map<string, number>();
+  for (const row of rows) {
+    if (!row.shipMode) continue;
+    sales.set(row.shipMode, (sales.get(row.shipMode) ?? 0) + row.sales);
+    count.set(row.shipMode, (count.get(row.shipMode) ?? 0) + 1);
+  }
+  const names = [
+    ...SHIP_ORDER.filter((name) => sales.has(name)),
+    ...[...sales.keys()].filter((name) => !SHIP_ORDER.includes(name)).sort(),
+  ];
+  return names.map((name) => ({ name, sales: sales.get(name) ?? 0, count: count.get(name) ?? 0 }));
+}
+
+export function shipDayCounts(rows: SalesRow[]): { days: string; count: number }[] {
+  const counts = new Map<number, number>();
+  for (const row of rows) {
+    if (row.shipDays == null || row.shipDays < 0) continue;
+    counts.set(row.shipDays, (counts.get(row.shipDays) ?? 0) + 1);
+  }
+  if (counts.size === 0) return [];
+  const max = Math.max(...counts.keys());
+  return Array.from({ length: max + 1 }, (_, days) => ({
+    days: String(days),
+    count: counts.get(days) ?? 0,
+  }));
+}
+
 function add(map: Map<string, number>, key: string, value: number) {
   if (!key) return;
   map.set(key, (map.get(key) ?? 0) + value);

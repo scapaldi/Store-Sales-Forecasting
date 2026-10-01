@@ -3,10 +3,15 @@ export type SalesRow = {
   year: string;
   region: string;
   state: string;
+  category: string;
   subCategory: string;
+  product: string;
   sales: number;
   quantity: number;
+  discount: number;
   profit: number;
+  shipMode: string;
+  shipDays: number | null;
 };
 
 const COLUMNS = [
@@ -43,11 +48,16 @@ export function decodeCsv(bytes: ArrayBuffer): string {
   }
 }
 
-/** Parse a CSV with quoted fields, escaped quotes, and CR, LF, or CRLF line endings. */
-export function parseCsv(text: string): SalesRow[] {
+export type SalesFile = {
+  rows: SalesRow[];
+  hasReturns: boolean;
+};
+
+export function parseCsv(text: string): SalesFile {
   const records = parseRecords(text.replace(/^\uFEFF/, ""));
-  if (records.length === 0) return [];
+  if (records.length === 0) return { rows: [], hasReturns: false };
   const header = records[0].map((cell) => cell.trim());
+  const hasReturns = header.some((name) => /return/i.test(name));
   const index = Object.fromEntries(COLUMNS.map((name) => [name, header.indexOf(name)]));
   const missing = COLUMNS.filter((name) => index[name] < 0);
   if (missing.length) {
@@ -60,32 +70,61 @@ export function parseCsv(text: string): SalesRow[] {
     const sales = Number(cell("Sales"));
     const quantity = Number(cell("Quantity"));
     const profit = Number(cell("Profit"));
+    const discount = Number(optional(record, header, "Discount"));
+    const orderDate = cell("Order Date");
     rows.push({
       orderId: cell("Order ID").trim(),
-      year: orderYear(cell("Order Date")),
+      year: orderYear(orderDate),
       region: cell("Region").trim(),
       state: cell("State").trim(),
+      category: optional(record, header, "Category").trim(),
       subCategory: cell("Sub-Category").trim(),
+      product: optional(record, header, "Product Name").trim(),
       sales: Number.isFinite(sales) ? sales : 0,
       quantity: Number.isFinite(quantity) ? quantity : 0,
+      discount: Number.isFinite(discount) ? discount : 0,
       profit: Number.isFinite(profit) ? profit : 0,
+      shipMode: optional(record, header, "Ship Mode").trim(),
+      shipDays: daysBetween(orderDate, optional(record, header, "Ship Date")),
     });
   }
-  return rows;
+  return { rows, hasReturns };
 }
 
-export async function loadSales(): Promise<SalesRow[]> {
-  const response = await fetch(assetPath("stores_sales_forecasting.csv"));
+export async function loadSales(): Promise<SalesFile> {
+  const response = await fetch(assetPath("data.csv"));
   if (!response.ok) {
     throw new Error("Could not load the sales file.");
   }
   const text = decodeCsv(await response.arrayBuffer());
-  if (!text.trim()) return [];
+  if (!text.trim()) return { rows: [], hasReturns: false };
   try {
     return parseCsv(text);
   } catch {
     throw new Error("Could not read the sales file.");
   }
+}
+
+function optional(record: string[], header: string[], name: string): string {
+  const index = header.indexOf(name);
+  return index < 0 ? "" : (record[index] ?? "");
+}
+
+/** Days from order date to ship date. Accepts M/D/YYYY and YYYY-MM-DD. */
+export function daysBetween(start: string, end: string): number | null {
+  const from = parseDay(start);
+  const to = parseDay(end);
+  if (from == null || to == null) return null;
+  return Math.round((to - from) / 86_400_000);
+}
+
+function parseDay(value: string): number | null {
+  const text = value.trim();
+  const us = text.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
+  if (us) return Date.UTC(Number(us[3]), Number(us[1]) - 1, Number(us[2]));
+  const iso = text.match(/^(\d{4})-(\d{1,2})-(\d{1,2})$/);
+  if (iso) return Date.UTC(Number(iso[1]), Number(iso[2]) - 1, Number(iso[3]));
+  return null;
 }
 
 function parseRecords(text: string): string[][] {
