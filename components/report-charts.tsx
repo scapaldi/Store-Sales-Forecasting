@@ -390,3 +390,154 @@ export function YearTrend({
     </ChartFrame>
   );
 }
+
+const CATEGORY_COLOR: Record<string, string> = {
+  Furniture: "#8c3a2f",
+  "Office Supplies": "#0e6b66",
+  Technology: "#1f4b82",
+};
+
+const FALLBACK_COLORS = ["#118DFF", "#E66C37", "#12239E", "#D64550"];
+
+export type CategoryPoint = {
+  category: string;
+  product: string;
+  discount: number;
+  profit: number;
+  sales: number;
+};
+
+export function CategoryDiscountScatter({ data }: { data: CategoryPoint[] }) {
+  const categories = [...new Set(data.map((point) => point.category))];
+  return (
+    <ChartFrame className="h-80 w-full">
+      <ResponsiveContainer width="100%" height="100%">
+        <ScatterChart margin={{ top: 16, right: 8, left: 0, bottom: 0 }}>
+          <CartesianGrid stroke="#edebe9" />
+          <XAxis
+            dataKey="discount"
+            type="number"
+            name="Discount"
+            domain={[0, "dataMax"]}
+            tickFormatter={(value: number) => `${Math.round(value * 100)}%`}
+            tick={{ fill: "#605e5c", fontSize: 11 }}
+            axisLine={false}
+            tickLine={false}
+          />
+          <YAxis
+            dataKey="profit"
+            type="number"
+            tickFormatter={axisMoney}
+            tick={{ fill: "#605e5c", fontSize: 11 }}
+            axisLine={false}
+            tickLine={false}
+            width={48}
+          />
+          <ZAxis dataKey="sales" range={[36, 280]} />
+          <ReferenceLine y={0} stroke="#D64550" strokeDasharray="4 4" />
+          <Tooltip
+            content={({ active, payload }) => {
+              if (!active || !payload?.length) return null;
+              const point = payload[0].payload as CategoryPoint;
+              return (
+                <Tip>
+                  <p className="max-w-56 font-semibold">{point.product || point.category}</p>
+                  <p>{point.category}</p>
+                  <p>Discount {pct(point.discount, 0)}</p>
+                  <p>Profit {money(point.profit)}</p>
+                  <p>Sales {money(point.sales)}</p>
+                </Tip>
+              );
+            }}
+          />
+          <Legend wrapperStyle={{ fontSize: 12 }} />
+          {categories.map((category, index) => (
+            <Scatter
+              key={category}
+              name={category}
+              data={data.filter((point) => point.category === category)}
+              fill={CATEGORY_COLOR[category] ?? FALLBACK_COLORS[index % FALLBACK_COLORS.length]}
+              isAnimationActive={false}
+            />
+          ))}
+        </ScatterChart>
+      </ResponsiveContainer>
+    </ChartFrame>
+  );
+}
+
+export function ShipModeBars({
+  data,
+}: {
+  data: { name: string; sales: number; count: number }[];
+}) {
+  return (
+    <ChartFrame className="h-64 w-full">
+      <ResponsiveContainer width="100%" height="100%">
+        <BarChart data={data} margin={{ top: 8, right: 8, left: 0, bottom: 0 }}>
+          <CartesianGrid stroke="#edebe9" vertical={false} />
+          <XAxis dataKey="name" tick={{ fill: "#252423", fontSize: 12 }} axisLine={false} tickLine={false} />
+          <YAxis
+            tickFormatter={axisMoney}
+            tick={{ fill: "#605e5c", fontSize: 11 }}
+            axisLine={false}
+            tickLine={false}
+            width={48}
+          />
+          <Tooltip
+            content={({ active, payload }) => {
+              if (!active || !payload?.length) return null;
+              const point = payload[0].payload as { name: string; sales: number; count: number };
+              return (
+                <Tip>
+                  <p className="font-semibold">{point.name}</p>
+                  <p>Sales {money(point.sales)}</p>
+                  <p>{point.count.toLocaleString("en-US")} lines</p>
+                </Tip>
+              );
+            }}
+          />
+          <Bar dataKey="sales" name="Sales" fill="#118DFF" radius={[3, 3, 0, 0]} isAnimationActive={false} />
+        </BarChart>
+      </ResponsiveContainer>
+    </ChartFrame>
+  );
+}
+
+export function ShipDayBars({ data }: { data: { days: string; count: number }[] }) {
+  return (
+    <ChartFrame className="h-64 w-full">
+      <ResponsiveContainer width="100%" height="100%">
+        <BarChart data={data} margin={{ top: 8, right: 8, left: 0, bottom: 16 }}>
+          <CartesianGrid stroke="#edebe9" vertical={false} />
+          <XAxis
+            dataKey="days"
+            tick={{ fill: "#252423", fontSize: 12 }}
+            axisLine={false}
+            tickLine={false}
+            label={{ value: "Days to ship", position: "insideBottom", offset: -12, fill: "#605e5c", fontSize: 11 }}
+          />
+          <YAxis
+            tick={{ fill: "#605e5c", fontSize: 11 }}
+            axisLine={false}
+            tickLine={false}
+            width={36}
+          />
+          <Tooltip
+            content={({ active, payload }) => {
+              if (!active || !payload?.length) return null;
+              const point = payload[0].payload as { days: string; count: number };
+              return (
+                <Tip>
+                  <p className="font-semibold">{point.days} days</p>
+                  <p>{point.count.toLocaleString("en-US")} lines</p>
+                </Tip>
+              );
+            }}
+          />
+          <Bar dataKey="count" name="Lines" fill="#E66C37" radius={[3, 3, 0, 0]} isAnimationActive={false} />
+        </BarChart>
+      </ResponsiveContainer>
+    </ChartFrame>
+  );
+}
