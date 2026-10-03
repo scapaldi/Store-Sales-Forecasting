@@ -66,10 +66,10 @@ function Dashboard({ file }: { file: SalesFile }) {
   return (
     <div className="space-y-3">
       <section className="grid grid-cols-2 gap-3 lg:grid-cols-4">
-        <Kpi label="Total sales" value={money(summary.sales)} />
-        <Kpi label="Total profit" value={money(summary.profit)} />
-        <Kpi label="Profit margin" value={pct(summary.margin)} />
-        <Kpi label="Average quantity per order" value={summary.avgQuantity.toFixed(1)} />
+        <Kpi label="Total Sales" value={money(summary.sales)} />
+        <Kpi label="Total Profit" value={money(summary.profit)} />
+        <Kpi label="Profit Margin" value={pct(summary.margin)} />
+        <Kpi label="Average per Order" value={summary.avgQuantity.toFixed(1)} />
       </section>
 
       {empty ? (
@@ -78,16 +78,16 @@ function Dashboard({ file }: { file: SalesFile }) {
         </p>
       ) : (
         <div className="grid gap-3 lg:grid-cols-2">
-          <Panel title="Sales by region">
+          <Panel title="Sales by Region">
             <SalesBars data={summary.regions} />
           </Panel>
-          <Panel title="Total sales by year">
+          <Panel title="Sales by Year">
             <YearBars data={summary.years} />
           </Panel>
-          <Panel title="Sales by sub-category">
+          <Panel title="Sales by Category">
             <SalesBars data={summary.subCategories} labelWidth={108} />
           </Panel>
-          <Panel title="Sales by state">
+          <Panel title="Sales by State">
             <StateMap salesByState={summary.salesByState} />
           </Panel>
           <Panel title="Do Discounts Help?" className="lg:col-span-2">
