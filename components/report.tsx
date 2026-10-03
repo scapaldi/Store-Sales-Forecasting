@@ -35,7 +35,7 @@ export function Report() {
     <div className="min-h-dvh bg-[#f3f2f1] text-[#252423]">
       <main className="mx-auto max-w-6xl px-4 py-5 md:px-6 md:py-6">
         <header className="mb-5">
-          <h1 className="mt-1 text-2xl font-semibold tracking-tight md:text-3xl">Store sales</h1>
+          <h1 className="mt-1 text-2xl font-semibold tracking-tight md:text-3xl">Store Sales</h1>
           <p className="mt-1 max-w-2xl text-sm text-[#605e5c]">
             Totals from <span className="font-medium">data.csv</span>. Store Sales Forecasting · 2014–2017
           </p>
