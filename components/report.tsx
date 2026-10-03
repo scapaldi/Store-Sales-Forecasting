@@ -108,7 +108,7 @@ function Dashboard({ file }: { file: SalesFile }) {
 
 function Kpi({ label, value }: { label: string; value: string }) {
   return (
-    <div className="rounded-md border border-[#e1dfdd] bg-white px-4 py-3">
+    <div className="rounded-md border border-2 border-[#605e5c] bg-white px-4 py-3">
       <p className="text-[11px] font-semibold tracking-wide text-[#605e5c] uppercase">{label}</p>
       <p className="mt-1 text-2xl font-semibold tracking-tight tabular-nums">{value}</p>
     </div>
@@ -125,7 +125,7 @@ function Panel({
   children: React.ReactNode;
 }) {
   return (
-    <section className={`rounded-md border border-[#e1dfdd] bg-white p-4 ${className ?? ""}`}>
+    <section className={`rounded-md border border-2 border-[#605e5c] bg-white p-4 ${className ?? ""}`}>
       <h2 className="text-sm font-semibold">{title}</h2>
       <div className="mt-2">{children}</div>
     </section>
