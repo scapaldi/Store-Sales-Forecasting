@@ -35,12 +35,9 @@ export function Report() {
     <div className="min-h-dvh bg-[#f3f2f1] text-[#252423]">
       <main className="mx-auto max-w-6xl px-4 py-5 md:px-6 md:py-6">
         <header className="mb-5">
-          <p className="text-[11px] font-semibold tracking-[0.16em] text-[#118DFF] uppercase">
-            Store sales forecasting · 2014–2017
-          </p>
           <h1 className="mt-1 text-2xl font-semibold tracking-tight md:text-3xl">Store sales</h1>
           <p className="mt-1 max-w-2xl text-sm text-[#605e5c]">
-            Totals from <span className="font-medium">data.csv</span>. Replace that file and rebuild to refresh every number on this page.
+            Totals from <span className="font-medium">data.csv</span>. Store Sales Forecasting · 2014–2017
           </p>
         </header>
 
